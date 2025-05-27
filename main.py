@@ -6,11 +6,11 @@ from google.auth.transport.requests import Request
 import requests
 import re
 import numpy as np
-import openai
+from openai import OpenAI
 
 CACHE_FILE = "embedding_cache.json"
 
-openai.api_key = os.environ["OPENAI_API_KEY"]
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 def split_by_sections(text):
     sections = []
@@ -28,11 +28,11 @@ def split_by_sections(text):
     return sections
     
 def get_embedding(text):
-    response = openai.Embedding.create(
+    response = client.embeddings.create(
         input=[text],
         model="text-embedding-3-small"
     )
-    return response["data"][0]["embedding"]
+    return response.data[0].embedding
 
 def cosine_similarity(a, b):
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
